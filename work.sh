@@ -19,3 +19,12 @@ qsub runPre.sh
 awk '/OG/ || /HEG4/' Meerkat.100kb.inf > Meerkat.100kb.draw.inf
 awk '/OG/ || /HEG4/' Bd.100kb.inf > Bd.100kb.draw.inf
 
+echo "Merged SV"
+qsub runPre.sh
+awk '/HEG4/' 1kb.merge.inf > 1kb.merge.draw.inf
+awk '/HEG4/' 1_10kb.merge.inf > 1_10kb.merge.draw.inf
+awk '/HEG4/' 10_100kb.merge.inf > 10_100kb.merge.draw.inf
+awk '/HEG4/' 100kb.merge.inf > 100kb.merge.draw.inf
+qsub runDraw.sh
+
+

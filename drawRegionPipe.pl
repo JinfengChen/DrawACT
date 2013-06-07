@@ -2,7 +2,7 @@
 use Getopt::Long;
 use FindBin qw($Bin);
 
-GetOptions (\%opt,"table:s","flanking:s","ACT","reordor","project:s","help");
+GetOptions (\%opt,"table:s","flanking:s","ACT","reorder","project:s","help");
 
 
 my $help=<<USAGE;
@@ -43,6 +43,7 @@ while(<IN>){
     for(my $i=0;$i<@unit;$i+=4){
         my $prefix=$unit[$i];
         my $chr   =$unit[$i+1];
+        $chr=~s/\_//;
         my ($s,$e)=sort {$a <=> $b} ($unit[$i+2],$unit[$i+3]);
         $s = $s-$opt{flanking} > 0 ? $s-$opt{flanking} : 0;
         $e = $e+$opt{flanking};
@@ -50,11 +51,11 @@ while(<IN>){
         my $head=$prefix."_".$chr."_".$s."_".$e;
         push @header, $head;
         $title=$head if ($i == 0);
-        `perl $Bin/scripts/getsubdata2genome_sd.pl --genegff ../input/MSU7.gene.gff --tegff ../input/MSU_r7.fa.RepeatMasker.out.gff --fasta ../input/MSU_r7.fa --refhead $head` if ($prefix=~/OS/i);
+        `perl $Bin/scripts/getsubdata2genome_sd.pl --genegff ../input/MSU7.gene.anno.gff --tegff ../input/MSU_r7.fa.RepeatMasker.out.gff --fasta ../input/MSU_r7.fa --refhead $head` if ($prefix=~/OS/i);
         `perl $Bin/scripts/getsubdata2genome_sd.pl --genegff ../input/OGL.fgenesh.clean.gff --tegff ../input/OGL.fa.RepeatMasker.out.gff --fasta ../input/OGL.fa --refhead $head` if ($prefix=~/OG/i);
         `perl $Bin/scripts/getsubdata2genome_sd.pl --genegff ../input/HEG4_REF.fgenesh.clean.gff --tegff ../input/HEG4_RAW.refassist.fa.RepeatMasker.out.gff --fasta ../input/HEG4_RAW.refassist.fa --refhead $head` if ($prefix=~/HEG4/i);
         if ($opt{ACT}){
-           `perl $Bin/act/GFF2embl.pl -gff $head.gene.gff -embl $head.gene.embl -fasta $head.fasta`;
+           `perl $Bin/act/GFF2embl_anno.pl -gff $head.gene.gff -embl $head.gene.embl -fasta $head.fasta`;
            `perl $Bin/act/gffrepeat2embl.pl -repeat $head.te.gff -embl $head.gene.embl -title $head` if (-f "$head.te.gff");
            if (-f "$head.te.gff"){
                   `mv $head.merge $head.embl`;
@@ -63,7 +64,7 @@ while(<IN>){
            }
         }
     }
-    if ($opt{redordor}){
+    if ($opt{reorder}){
         for (my $i=0;$i<@header;$i++){
             if ($header[$i]=~/OG/){
                my $tmp=$header[$i];
@@ -74,6 +75,7 @@ while(<IN>){
     }
     if ($opt{ACT}){
     my $headers=join(",",@header);
+    print "Headers: $headers\n";
     `perl $Bin/act/runblast2seq.pl`;
     `perl $Bin/act/run2act.pl`;
     `perl $Bin/scripts/drawRegionNway.pl --headers $headers --project $title`;

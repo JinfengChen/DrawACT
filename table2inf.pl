@@ -59,13 +59,31 @@ while(<IN1>){
        `blastall -p blastn -U -i $opt{project}.query.fa -d $heg4 -o HEG4.blast -e 1e-5 -m 8`;
        my $oginf=target("OGL.blast","OG");
        my $heg4inf=target("HEG4.blast","HEG4");
+       if ($heg4inf eq "NA"){
+          $seq1=substr($refseq->{$unit[0]},$unit[1]-20000,20000);
+          $seq2=substr($refseq->{$unit[0]},$unit[2],20000);
+          open OUT, ">$opt{project}.query.fa" or die "$!";
+               print OUT ">$h1\n$seq1\n>$h2\n$seq2\n";
+          close OUT;
+          `blastall -p blastn -U -i $opt{project}.query.fa -d $heg4 -o HEG4.blast -e 1e-5 -m 8`;
+          $heg4inf=target("HEG4.blast","HEG4");
+       }
+       if ($og4inf eq "NA"){
+          $seq1=substr($refseq->{$unit[0]},$unit[1]-20000,20000);
+          $seq2=substr($refseq->{$unit[0]},$unit[2],20000);
+          open OUT, ">$opt{project}.query.fa" or die "$!";
+               print OUT ">$h1\n$seq1\n>$h2\n$seq2\n";
+          close OUT;
+          `blastall -p blastn -U -i $opt{project}.query.fa -d $og -o OGL.blast -e 1e-5 -m 8`;
+          $heg4inf=target("OGL.blast","OG");
+       }
        print "$oginf\t$heg4inf\n";
        print INF "OS\t$unit[0]\t$unit[1]\t$unit[2]";
        print INF "\t$oginf" if ($oginf ne "NA");
        print INF "\t$heg4inf" if ($heg4inf ne "NA");
        print INF "\tOS\t$unit[3]\t$unit[4]\t$unit[5]" if (@unit > 3);
        print INF "\n";
-       `rm $opt{project}.query.fa OGL.blast HEG4.blast`;
+       #`rm $opt{project}.query.fa OGL.blast HEG4.blast`;
     }
 }
 close IN1;
@@ -102,6 +120,7 @@ if ($hash{"upstream"}->[0] eq $hash{"downstream"}->[0]){
    $target="$title\t$hash{\"upstream\"}->[0]\t$hash{\"upstream\"}->[1]\t$hash{\"downstream\"}->[2]"; ## OS	Chr1	start	end
 }else{
    print "Hit on different chromosome: $hash{\"upstream\"}->[0]\t$hash{\"upstream\"}->[1]\t$hash{\"upstream\"}->[2]\t$hash{\"downstream\"}->[0]\t$hash{\"downstream\"}->[1]\t$hash{\"downstream\"}->[2]\n";
+   
    $target="NA";
 }
 return $target;

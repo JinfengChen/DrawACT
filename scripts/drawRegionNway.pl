@@ -51,20 +51,61 @@ for(my $i=0;$i<@feature;$i++){
 
 
 ###Draw chromosome links
+my $bary;
 for(my $i=1;$i<@feature;$i++){
    my $act=$feature[$i-1]."VS".$feature[$i]."4ACT";
    my $h1=($i-1)*$yinterval+$firsty+15;
    my $h2=$i*$yinterval+$firsty-15;
+   $bary=$h2+60;
    drawlinkACT($act,$rate,$h1,$h2);
 }
 ##
 
+###Draw scale bar
+my $barx1=550;
+my $barx2=$barx1+5000/$rate;
+my $scalebar=$svg->line(
+     x1=>$barx1,y1=>$bary,
+     x2=>$barx2,y2=>$bary,
+     style=>{stroke=>'black'}
+   );
+my $scale=$svg->text(
+     x=>$barx2+5,y=>$bary,
+     style=>{
+         'font-size'=>'70%','text-anchor'=>'start','font-weight'=>'100'
+     }
+)->cdata("5 Kb");
 
+$svg=legend($svg,$barx1-150,$bary-5,"GENE","black");
+$svg=legend($svg,$barx1-100,$bary-5,"LTR","red");
+$svg=legend($svg,$barx1-50,$bary-5,"DNA","blue");
 
 my $outfile="$opt{project}.svg";
 writesvg($outfile,$svg);
 
 #############
+
+sub legend{
+my ($svg,$x,$y,$name,$color)=@_;
+my $xtext=$x+18; 
+ $svg->rectangle(
+            x=>$x,y=>$y,
+            width=>10,height=>10,
+            style=>{
+                fill=>$color
+            }
+ );
+ $svg->text(
+            x=>$xtext,y=>$y+6,
+            style=>{
+               'font-size'=>'70%','text-anchor'=>'start','font-weight'=>'100'
+            }
+ )->cdata($name);
+ 
+return $svg;
+}
+
+
 
 sub maxlen
 {
@@ -286,7 +327,7 @@ foreach my $g (keys %$refgenegff){
        my $geneline=$svg->line(
           x1=>$gstart,y1=>$y-6,
           x2=>$gend,y2=>$y-6,
-          style=>{stroke=>'brown'}
+          style=>{stroke=>'black'}
        );
        foreach my $e (sort {$a->[0] <=> $b->[1]} @pos){
            my $start=$e->[0]/$rate+$x1;
@@ -296,7 +337,7 @@ foreach my $g (keys %$refgenegff){
               x=>$start, y=>$exony,
               width=>$elen,height=>8,
               style=>{
-                fill=>'brown'
+                fill=>'black'
               }
            );
        }   
@@ -312,7 +353,7 @@ foreach my $g (keys %$refgenegff){
        my $geneline=$svg->line(
           x1=>$gstart,y1=>$y+6,
           x2=>$gend,y2=>$y+6,
-          style=>{stroke=>'brown'}
+          style=>{stroke=>'black'}
        );
        foreach my $e (sort {$a->[0] <=> $b->[1]} @pos){
            my $start=$e->[0]/$rate+$x1;
@@ -322,7 +363,7 @@ foreach my $g (keys %$refgenegff){
               x=>$start, y=>$exony,
               width=>$elen,height=>8,
               style=>{
-                fill=>'brown'
+                fill=>'black'
               }
            );
        }
@@ -342,9 +383,9 @@ foreach my $te (keys %$reftegff){
     my $type=$1 if ($line[8]=~/Class=(.*?);/);
         my $color="gray";
     if ($type=~/DNA/){
-       $color="black";
-    }elsif($type=~/LTR/){
        $color="blue";
+    }elsif($type=~/LTR/){
+       $color="red";
     }
     $type=~s/DNA\///;
     $type=~s/LTR\///;

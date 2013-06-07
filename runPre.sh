@@ -10,7 +10,12 @@ cd $PBS_O_WORKDIR
 
 #perl table2inf.pl --table ../input/SVlargerTH100kb/HEG4.meerkat.table --project Meerkat.100kb
 #perl table2inf.pl --table ../input/SVlargerTH100kb/HEG4.bd.table --project Bd.100kb
-perl table2inf.pl --table ../input/SVlargerTH100kb/HEG4.pindel.filter.table --project Pindel.100kb
+#perl table2inf.pl --table ../input/SVlargerTH100kb/HEG4.pindel.filter.table --project Pindel.100kb
+
+perl table2inf.pl --table ../input/SVlargerTH100kb/100kb.merge.table --project 100kb.merge
+perl table2inf.pl --table ../input/SVlargerTH100kb/10_100kb.merge.table --project 10_100kb.merge
+perl table2inf.pl --table ../input/SVlargerTH100kb/1_10kb.merge.table --project 1_10kb.merge
+perl table2inf.pl --table ../input/SVlargerTH100kb/1kb.merge.table --project 1kb.merge
 
 echo "Done"
 

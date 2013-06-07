@@ -112,6 +112,7 @@ if ($strand eq "+"){
    open OUT1, ">>$head.te.gff" or die "$!";
    while (<IN1>){
      my @unit=split("\t",$_);
+     $unit[0]=~s/\_//;
      if ($unit[0] eq $chr and $unit[3] >= $start and $unit[4] <= $end){
        $unit[3]=$unit[3]-$start;
        $unit[4]=$unit[4]-$start;
@@ -127,6 +128,7 @@ if ($strand eq "+"){
    open OUT1, ">>$head.te.gff" or die "$!";
    while (<IN1>){
      my @unit=split("\t",$_);
+     $unit[0]=~s/\_//;
      if ($unit[0] eq $chr and $unit[3] >= $start and $unit[4] <= $end){
         my $tempend   =$len-($unit[3]-$start);
         my $tempstart =$len-($unit[4]-$start);
@@ -160,6 +162,7 @@ if ($strand eq "+"){
    open OUT1, ">>$head.gene.gff" or die "$!";
    while (<IN1>){
      my @unit=split("\t",$_);
+     $unit[0]=~s/\_//;
      if ($unit[0] eq $chr and $unit[3] >= $start and $unit[4] <= $end){ 
        $unit[3]=$unit[3]-$start;
        $unit[4]=$unit[4]-$start;
@@ -175,6 +178,7 @@ if ($strand eq "+"){
    open OUT1, ">>$head.gene.gff" or die "$!";
    while (<IN1>){
      my @unit=split("\t",$_);
+     $unit[0]=~s/\_//;
      if ($unit[0] eq $chr and $unit[3] >= $start and $unit[4] <= $end){ 
         my $tempend   =$len-($unit[3]-$start);
         my $tempstart =$len-($unit[4]-$start); 
@@ -240,6 +244,7 @@ while (<IN>){
     my $temp=shift @unit;
     my @temp1=split(" ",$temp);
     my $head=$temp1[0];
+    $head=~s/\_//;
     my $seq=join("\n",@unit);
     $seq=~s/\>//g;
     $seq=~s/\n//g;
